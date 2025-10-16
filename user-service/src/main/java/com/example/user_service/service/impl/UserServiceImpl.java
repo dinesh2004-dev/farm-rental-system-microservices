@@ -1,0 +1,37 @@
+package com.example.user_service.service.impl;
+
+import com.example.user_service.dtos.UserDTO;
+import com.example.user_service.entity.User;
+import com.example.user_service.repository.UserRepository;
+import com.example.user_service.service.UserService;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ModelMapper mapper;
+
+    @Override
+    public int saveUser(UserDTO userDTO) {
+
+        User user = mapper.map(userDTO, User.class);
+        userRepository.save(user);
+        return user.getId();
+    }
+
+    @Override
+    public UserDTO getUserById(int id) {
+
+        Optional<User> user = userRepository.findById(id);
+        UserDTO userDTO = mapper.map(user, UserDTO.class);
+        return userDTO;
+    }
+}

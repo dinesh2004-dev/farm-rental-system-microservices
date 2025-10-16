@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: booking-service
+
+server:
+  port: 8083
+
+eureka:
+  client:
+    server-url:
+      defaultZone: http://localhost:8761/eureka/

@@ -1,0 +1,34 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: api-gateway
+  # 'cloud' should be at the same indentation level as 'application'
+  cloud:
+    gateway:
+      server:
+        webflux:
+          # This part automatically creates routes from service names (e.g., /user-service/**)
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          # This part defines your custom, cleaner route which takes priority
+          routes:
+            - id: user-service-route
+              uri: lb://user-service
+              predicates:
+                - Path=/users/** # 'Path' with a capital 'P' is correct
+            - id: equipment-service-route
+              uri: lb://equipment-service
+              predicates:
+                  - Path=/equipments/**
+
+
+# This is the configuration for the Eureka client
+eureka:
+  client:
+    # 'serviceUrl' (camelCase) is the canonical property name, though 'service-url' often works too
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
