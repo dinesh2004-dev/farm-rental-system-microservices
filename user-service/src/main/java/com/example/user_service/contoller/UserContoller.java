@@ -1,5 +1,6 @@
 package com.example.user_service.contoller;
 
+import com.example.user_service.dtos.EquipmentDTO;
 import com.example.user_service.dtos.UserDTO;
 import com.example.user_service.entity.User;
 import com.example.user_service.service.UserService;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -33,4 +36,14 @@ public class UserContoller {
 
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
+
+    @GetMapping("/{userId}/equipments")
+    public ResponseEntity<List<EquipmentDTO>> getEquipmentsByUserId(@PathVariable int userId) {
+        List<EquipmentDTO> equipmentDTOs = userService.getEquipmentsByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(equipmentDTOs);
+    }
+
+
+
+
 }

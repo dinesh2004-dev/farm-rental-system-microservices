@@ -13,6 +13,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  cloud:
+    feign:
+        hystrix:
+            enabled: true
 
 
 server:
