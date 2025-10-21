@@ -8,6 +8,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class EquipmentServiceImpl implements EquipmentService {
 
@@ -35,5 +38,13 @@ public class EquipmentServiceImpl implements EquipmentService {
         Equipment equipment = equipmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Equipment not found with id: " + id));
         return mapper.map(equipment, EquipmentDTO.class);
+    }
+
+    @Override
+    public List<EquipmentDTO> getEquipmentsByUserId(int userId) {
+        List<Equipment> equipments = equipmentRepository.findByOwnerId(userId);
+        return equipments.stream()
+                .map(equipment -> mapper.map(equipment, EquipmentDTO.class))
+                .collect(Collectors.toList());
     }
 }

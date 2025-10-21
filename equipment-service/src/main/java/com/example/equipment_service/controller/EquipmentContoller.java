@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/equipments")
 public class EquipmentContoller {
@@ -28,5 +30,11 @@ public class EquipmentContoller {
         EquipmentDTO equipmentDTO = equipmentService.getEquipmentById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(equipmentDTO);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<List<EquipmentDTO>> getEquipmentsByUserId(@PathVariable int userId) {
+        List<EquipmentDTO> equipmentDTOs = equipmentService.getEquipmentsByUserId(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(equipmentDTOs);
     }
 }

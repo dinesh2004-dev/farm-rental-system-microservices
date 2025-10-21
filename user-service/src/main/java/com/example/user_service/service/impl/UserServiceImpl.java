@@ -1,6 +1,8 @@
 package com.example.user_service.service.impl;
 
 import com.example.user_service.clients.EquipmentServiceClient;
+import com.example.user_service.clients.MapsServiceClient;
+import com.example.user_service.dtos.CoordinatesDto;
 import com.example.user_service.dtos.EquipmentDTO;
 import com.example.user_service.dtos.UserDTO;
 import com.example.user_service.entity.User;
@@ -25,8 +27,16 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private EquipmentServiceClient equipmentServiceClient;
 
+    @Autowired
+    private MapsServiceClient mapsServiceClient;
+
     @Override
     public int saveUser(UserDTO userDTO) {
+
+        CoordinatesDto coordinates = mapsServiceClient.geocodeAddress(userDTO.getAddress());
+        userDTO.setLatitude(coordinates.getLatitude());
+        userDTO.setLongitude(coordinates.getLongitude());
+        userDTO.setAddress(coordinates.getAddress());
 
         User user = mapper.map(userDTO, User.class);
         userRepository.save(user);
