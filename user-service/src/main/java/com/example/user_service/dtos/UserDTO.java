@@ -11,4 +11,7 @@ public class UserDTO {
     private Role role;
     private String password;
     private String phoneNumber;
+    private double latitude;
+    private double longitude;
+    private String address;
 }

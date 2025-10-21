@@ -22,5 +22,12 @@ public class User {
     private String phoneNumber;
     @Enumerated(value = EnumType.STRING)
     private Role role;
+    @Column(nullable = false)
+    private double latitude;
+    @Column(nullable = false)
+    private double longitude;
+    @Column(name = "Address", nullable = false)
+    private String address;
+
 
 }

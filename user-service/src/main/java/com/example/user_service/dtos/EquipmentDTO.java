@@ -1,6 +1,6 @@
 package com.example.user_service.dtos;
 
-import com.example.user_service.entity.EquipmentType;
+import com.example.user_service.enums.EquipmentType;
 import lombok.Data;
 
 @Data
