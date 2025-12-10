@@ -25,4 +25,5 @@ public class BookingsController {
         return ResponseEntity.status(HttpStatus.CREATED).body((id));
 
     }
+
 }
