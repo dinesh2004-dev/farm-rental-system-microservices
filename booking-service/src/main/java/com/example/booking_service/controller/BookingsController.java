@@ -6,19 +6,16 @@ import com.example.booking_service.service.impl.BookingServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/bookings")
+@RequestMapping("/api/bookings")
 public class BookingsController {
 
     @Autowired
     private BookingServiceImpl bookingServiceImpl;
 
-    @GetMapping("/create")
+    @PostMapping("/create")
     public ResponseEntity<Integer> createBooking(@RequestBody BookingsDTO bookingsDTO){
 
         int id = bookingServiceImpl.createBooking(bookingsDTO);
