@@ -8,6 +8,7 @@ import org.springframework.context.annotation.PropertySource;
 @EnableDiscoveryClient
 @SpringBootApplication
 @PropertySource("classpath:WebConfig.properties")
+@PropertySource("classpath:Security.properties")
 public class ApiGatewayApplication {
 
 	public static void main(String[] args) {

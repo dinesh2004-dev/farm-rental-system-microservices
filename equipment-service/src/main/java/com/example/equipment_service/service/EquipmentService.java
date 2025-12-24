@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface EquipmentService {
 
-    int saveEmployee(EquipmentDTO equipmentDTO);
+    int saveEquipment(EquipmentDTO equipmentDTO);
 
     EquipmentDTO getEquipmentById(int id);
 

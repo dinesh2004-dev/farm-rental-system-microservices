@@ -19,7 +19,7 @@ public class EquipmentContoller {
     @PostMapping("/save")
     public ResponseEntity<String> saveEquipment(@RequestBody EquipmentDTO equipmentDTO){
 
-        int id = equipmentService.saveEmployee(equipmentDTO);
+        int id = equipmentService.saveEquipment(equipmentDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body("Equipment saved successfully with id: "+id);
     }

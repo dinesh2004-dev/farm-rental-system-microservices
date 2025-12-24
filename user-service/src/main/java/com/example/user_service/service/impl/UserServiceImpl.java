@@ -10,13 +10,17 @@ import com.example.user_service.repository.UserRepository;
 import com.example.user_service.service.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements UserService, UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
@@ -30,6 +34,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private MapsServiceClient mapsServiceClient;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     public int saveUser(UserDTO userDTO) {
 
@@ -39,9 +46,11 @@ public class UserServiceImpl implements UserService {
         userDTO.setAddress(coordinates.getAddress());
 
         User user = mapper.map(userDTO, User.class);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
         return user.getId();
     }
+
 
     @Override
     public UserDTO getUserById(int id) {
@@ -55,5 +64,13 @@ public class UserServiceImpl implements UserService {
     public List<EquipmentDTO> getEquipmentsByUserId(int userId){
         return equipmentServiceClient.getEquipmentsByUserId(userId);
 
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+
+        return userRepository.findByEmail(username)
+                .orElseThrow(() ->
+                        new UsernameNotFoundException("User not found with email: " + username));
     }
 }

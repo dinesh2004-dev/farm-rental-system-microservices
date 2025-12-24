@@ -3,10 +3,13 @@ package com.example.equipment_service.service.impl;
 import com.example.equipment_service.Repository.EquipmentRepository;
 import com.example.equipment_service.dtos.EquipmentDTO;
 import com.example.equipment_service.entity.Equipment;
+import com.example.equipment_service.events.EquipmentEvent;
+import com.example.equipment_service.producer.EquipmentEventProducer;
 import com.example.equipment_service.service.EquipmentService;
 import com.example.equipment_service.util.AuthUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +24,14 @@ public class EquipmentServiceImpl implements EquipmentService {
     private EquipmentRepository equipmentRepository;
 
     @Autowired
+    private EquipmentEventProducer equipmentEventProducer;
+
+    @Autowired
     private ModelMapper mapper;
 
     @PreAuthorize("hasRole('Lender') or hasRole('Admin')")
     @Override
-    public int saveEmployee(EquipmentDTO equipmentDTO) {
+    public int saveEquipment(EquipmentDTO equipmentDTO) {
         if (equipmentDTO.getEquipmentName() == null || equipmentDTO.getEquipmentName().trim().isEmpty()) {
             throw new IllegalArgumentException("equipmentName must not be null or empty");
         }
@@ -35,6 +41,10 @@ public class EquipmentServiceImpl implements EquipmentService {
         equipment.setOwnerId(userId);
 
         equipmentRepository.save(equipment);
+
+        EquipmentEvent equipmentEvent = new EquipmentEvent(equipment);
+
+        equipmentEventProducer.sendEquipmentEvent(equipmentEvent);
         return equipment.getId();
     }
 

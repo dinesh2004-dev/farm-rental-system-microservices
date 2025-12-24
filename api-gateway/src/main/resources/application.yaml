@@ -20,10 +20,18 @@ spring:
               uri: lb://user-service
               predicates:
                 - Path=/users/** # 'Path' with a capital 'P' is correct
+            - id: user-service-login-route
+              uri: lb://user-service
+              predicates:
+                  - Path=/api/auth/login
             - id: equipment-service-route
               uri: lb://equipment-service
               predicates:
-                  - Path=/equipments/**
+                  - Path=/api/equipments/**
+            - id: booking-service-route
+              uri: lb://booking-service
+              predicates:
+                    - Path=/api/bookings/**
 
 
 # This is the configuration for the Eureka client
@@ -32,3 +40,14 @@ eureka:
     # 'serviceUrl' (camelCase) is the canonical property name, though 'service-url' often works too
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    org:
+      springframework:
+        security: DEBUG
+
+
+    com:
+      example:
+        api_gateway: DEBUG
