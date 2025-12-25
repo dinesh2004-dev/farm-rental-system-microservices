@@ -19,7 +19,7 @@ spring:
             - id: user-service-route
               uri: lb://user-service
               predicates:
-                - Path=/users/** # 'Path' with a capital 'P' is correct
+                - Path=api/users/** # 'Path' with a capital 'P' is correct
             - id: equipment-service-route
               uri: lb://equipment-service
               predicates:
