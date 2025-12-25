@@ -4,6 +4,8 @@ import com.example.booking_service.clients.EquipmentClient;
 import com.example.booking_service.dtos.BookingsDTO;
 import com.example.booking_service.dtos.EquipmentInfo;
 import com.example.booking_service.entity.Booking;
+import com.example.booking_service.events.ReserveEquipmentCommand;
+import com.example.booking_service.producer.ReserveEquipmentCommandProducer;
 import com.example.booking_service.repository.BookingsRepository;
 import com.example.booking_service.service.BookingService;
 import com.example.booking_service.util.AuthUtil;
@@ -25,8 +27,9 @@ public class BookingServiceImpl implements BookingService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-
     private EquipmentClient equipmentClient;
+    @Autowired
+    private ReserveEquipmentCommandProducer reserveEquipmentCommandProducer;
 
 
     @Override
@@ -55,7 +58,10 @@ public class BookingServiceImpl implements BookingService {
         booking.setLender(equipmentInfo.getOwnerId());
         int renterId = Integer.parseInt(Objects.requireNonNull(AuthUtil.getUserId()));
         booking.setRenter(renterId);
+        ReserveEquipmentCommand event = new ReserveEquipmentCommand(booking);
+        reserveEquipmentCommandProducer.sendReserveEquipmentCommandEvent(event);
         Booking savedBooking = bookingsRepository.save(booking);
+
 
         return savedBooking.getId();
 
