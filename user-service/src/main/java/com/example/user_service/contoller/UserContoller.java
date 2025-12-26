@@ -2,14 +2,11 @@ package com.example.user_service.contoller;
 
 import com.example.user_service.dtos.EquipmentDTO;
 import com.example.user_service.dtos.UserDTO;
-import com.example.user_service.entity.User;
-import com.example.user_service.service.UserService;
 import com.example.user_service.service.impl.UserServiceImpl;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
