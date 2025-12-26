@@ -40,17 +40,17 @@ public class BookingServiceImpl implements BookingService {
 
         EquipmentInfo equipmentInfo = equipmentClient.getEquipmentById(equipment);
 
-        if(Objects.isNull(equipmentInfo)){
+        if (Objects.isNull(equipmentInfo)) {
 
             throw new RuntimeException("Equipment not found with id: " + equipment);
         }
 
-        if(!equipmentInfo.isAvailable()){
+        if (!equipmentInfo.isAvailable()) {
 
             throw new RuntimeException("Equipment with id: " + equipment + " is not available for booking");
         }
-        if(bookingsRepository.existsOverlappingBooking(equipment,
-                bookingsDTO.getStart_date(), bookingsDTO.getEnd_date())){
+        if (bookingsRepository.existsOverlappingBooking(equipment,
+                bookingsDTO.getStart_date(), bookingsDTO.getEnd_date())) {
 
             throw new RuntimeException("Equipment with id: " + equipment + " is already booked for the selected dates");
         }
@@ -65,6 +65,6 @@ public class BookingServiceImpl implements BookingService {
 
         return savedBooking.getId();
 
-        
+
     }
 }
