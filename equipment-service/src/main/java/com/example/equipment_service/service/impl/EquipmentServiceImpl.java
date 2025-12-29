@@ -39,6 +39,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         int userId = Integer.parseInt(Objects.requireNonNull(AuthUtil.getUserId()));
         Equipment equipment = mapper.map(equipmentDTO, Equipment.class);
         equipment.setOwnerId(userId);
+        equipment.setAvailable(true);
 
         equipmentRepository.save(equipment);
 

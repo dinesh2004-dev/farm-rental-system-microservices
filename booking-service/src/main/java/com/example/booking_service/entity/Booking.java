@@ -16,8 +16,8 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "lender_id",nullable = false)
-    private int lender;
+//    @Column(name = "lender_id",nullable = false)
+//    private int lender;
     @Column(name = "equipment_id",nullable = false)
     private int equipment;
     @Column(name = "renter_id",nullable = false)
@@ -34,6 +34,8 @@ public class Booking {
     private PaymentStatus paymentStatus;
     @Column(nullable = false)
     private double totalCost;
+    @Column(nullable = false)
+    private String sagaId;
 
     @PrePersist
     public void onPrePersistance(){

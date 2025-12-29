@@ -52,9 +52,9 @@ public class BookingServiceImpl implements BookingService {
             throw new RuntimeException("Equipment with id: " + equipment + " is already booked for the selected dates");
         }
         Booking booking = modelMapper.map(bookingsDTO, Booking.class);
-        booking.setLender(equipmentInfo.getOwnerId());
         int renterId = Integer.parseInt(Objects.requireNonNull(AuthUtil.getUserId()));
         booking.setRenter(renterId);
+        booking.setSagaId("235tfb");
         Booking savedBooking = bookingsRepository.save(booking);
 
         return savedBooking.getId();
