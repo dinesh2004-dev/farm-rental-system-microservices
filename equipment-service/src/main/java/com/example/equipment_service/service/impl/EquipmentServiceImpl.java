@@ -3,15 +3,14 @@ package com.example.equipment_service.service.impl;
 import com.example.equipment_service.Repository.EquipmentRepository;
 import com.example.equipment_service.dtos.EquipmentDTO;
 import com.example.equipment_service.entity.Equipment;
-import com.example.equipment_service.events.EquipmentEvent;
 import com.example.equipment_service.producer.EquipmentEventProducer;
 import com.example.equipment_service.service.EquipmentService;
 import com.example.equipment_service.util.AuthUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -42,10 +41,17 @@ public class EquipmentServiceImpl implements EquipmentService {
 
         equipmentRepository.save(equipment);
 
-        EquipmentEvent equipmentEvent = new EquipmentEvent(equipment);
-
-        equipmentEventProducer.sendEquipmentEvent(equipmentEvent);
         return equipment.getId();
+    }
+
+    @Override
+    @Transactional
+    public boolean reserveEquipment(int equipmentId) {
+
+        int updatedRows =
+                equipmentRepository.reserveIfAvailable(equipmentId);
+
+        return updatedRows == 1;
     }
 
     @Override
