@@ -13,12 +13,10 @@ import java.time.LocalDateTime;
 public class BookingsDTO {
 
 
-    private int lender;
+
     private int equipment;
     private int renter;
     private LocalDateTime start_date;
     private LocalDateTime end_date;
-    private BookingStatus bookingStatus;
-    private PaymentStatus paymentStatus;
-    private double totalCost;
+    private double pricePerDay;
 }
