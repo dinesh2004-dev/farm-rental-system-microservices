@@ -1,10 +1,10 @@
-package com.example.equipment_service.config;
+package com.example.booking_service.configuration;
 
-import com.example.equipment_service.events.EquipmentEvent;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.example.events.ReserveEquipmentCommand;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
@@ -18,45 +18,57 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaConfig {
+public class KafkaProducerConfig {
 
     @Bean
-    public KafkaAdmin kafkaAdmin() {
-        Map<String, Object> configs = new HashMap<>();
-        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+    public KafkaAdmin admin(){
+
+        Map<String,Object> configs = new HashMap<>();
+
+        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9092");
+
         return new KafkaAdmin(configs);
     }
 
     @Bean
-    public NewTopic equipmentTopic() {
-        return TopicBuilder.name("equipment-added-topic")
+    public NewTopic reserveEquipmentTopic(){
+
+        return TopicBuilder
+                .name("reserve-equipment-command")
                 .partitions(3)
                 .replicas(1)
                 .build();
     }
 
     @Bean
-    public Map<String, Object> producerConfig() {
-        Map<String, Object> props = new HashMap<>();
+    public Map<String,Object> producerConfig(){
 
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+        Map<String,Object> props = new HashMap<>();
+
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,"localhost:9092");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        props.put(ProducerConfig.ACKS_CONFIG, "all");
-        props.put(ProducerConfig.RETRIES_CONFIG, 3);
+        props.put(ProducerConfig.ACKS_CONFIG,"all");
+        props.put(ProducerConfig.RETRIES_CONFIG,5);
 
+        props.put(ProducerConfig.LINGER_MS_CONFIG,5);
+
+        props.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG,true);
+        props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION,5);
         return props;
     }
 
     @Bean
-    public ProducerFactory<String, EquipmentEvent> producerFactory() {
+    public ProducerFactory<String, ReserveEquipmentCommand> producerFactory(){
+
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public KafkaTemplate<String, EquipmentEvent> kafkaTemplate(
-            ProducerFactory<String, EquipmentEvent> factory
-    ) {
-        return new KafkaTemplate<>(factory);
+    public KafkaTemplate<String,ReserveEquipmentCommand> kafkaTemplate(
+            ProducerFactory<String,ReserveEquipmentCommand> producerFactory
+    ){
+
+        return new KafkaTemplate<>(producerFactory);
     }
 }

@@ -11,4 +11,6 @@ public interface EquipmentService {
     EquipmentDTO getEquipmentById(int id);
 
     List<EquipmentDTO> getEquipmentsByUserId(int userId);
+
+    boolean reserveEquipment(int equipmentId);
 }

@@ -2,22 +2,28 @@ package com.example.booking_service.service.impl;
 
 import com.example.booking_service.clients.EquipmentClient;
 import com.example.booking_service.dtos.BookingsDTO;
-import com.example.booking_service.dtos.EquipmentInfo;
 import com.example.booking_service.entity.Booking;
+
+import com.example.booking_service.enums.BookingStatus;
+import com.example.booking_service.enums.PaymentStatus;
+import com.example.booking_service.producer.ReserveEquipmentCommandProducer;
 import com.example.booking_service.repository.BookingsRepository;
 import com.example.booking_service.service.BookingService;
 import com.example.booking_service.util.AuthUtil;
+import org.example.events.ReserveEquipmentCommand;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.annotation.Isolation;
 
+
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
+import java.util.UUID;
 
 @Service
-@Transactional(isolation = Isolation.SERIALIZABLE)
 public class BookingServiceImpl implements BookingService {
 
     @Autowired
@@ -25,40 +31,41 @@ public class BookingServiceImpl implements BookingService {
     @Autowired
     private ModelMapper modelMapper;
     @Autowired
-
     private EquipmentClient equipmentClient;
+    @Autowired
+    private ReserveEquipmentCommandProducer reserveEquipmentCommandProducer;
 
 
     @Override
+    @Transactional
     @PreAuthorize("hasRole('Renter')")
     public int createBooking(BookingsDTO bookingsDTO) {
 
-        int equipment = bookingsDTO.getEquipment();
-
-        EquipmentInfo equipmentInfo = equipmentClient.getEquipmentById(equipment);
-
-        if(Objects.isNull(equipmentInfo)){
-
-            throw new RuntimeException("Equipment not found with id: " + equipment);
-        }
-
-        if(!equipmentInfo.isAvailable()){
-
-            throw new RuntimeException("Equipment with id: " + equipment + " is not available for booking");
-        }
-        if(bookingsRepository.existsOverlappingBooking(equipment,
-                bookingsDTO.getStart_date(), bookingsDTO.getEnd_date())){
-
-            throw new RuntimeException("Equipment with id: " + equipment + " is already booked for the selected dates");
-        }
         Booking booking = modelMapper.map(bookingsDTO, Booking.class);
-        int renterId = Integer.parseInt(Objects.requireNonNull(AuthUtil.getUserId()));
-        booking.setRenter(renterId);
-        booking.setSagaId("235tfb");
-        Booking savedBooking = bookingsRepository.save(booking);
 
-        return savedBooking.getId();
+        int renter = AuthUtil.getUserId() == null ? 0 : Integer.parseInt(Objects.requireNonNull(AuthUtil.getUserId()));
+        String sagaId = UUID.randomUUID().toString();
+        int days = Math.toIntExact(Duration.between(bookingsDTO.getStart_date(), bookingsDTO.getEnd_date()).toDays());
+        double totalPrice = days * bookingsDTO.getPricePerDay();
+        booking.setRenter(renter);
+        booking.setSagaId(sagaId);
+        booking.setTotalCost(totalPrice);
+        booking.setBookingStatus(BookingStatus.Pending);
+        booking.setPaymentStatus(PaymentStatus.PENDING);
+        bookingsRepository.save(booking);
 
-        
+
+        ReserveEquipmentCommand command = new ReserveEquipmentCommand(
+                booking.getId(),
+                bookingsDTO.getEquipment(),
+                sagaId,
+                Instant.now()
+        );
+
+        reserveEquipmentCommandProducer.sendReserveEquipmentCommandEvent(command);
+
+        return booking.getId();
+
     }
 }
+
