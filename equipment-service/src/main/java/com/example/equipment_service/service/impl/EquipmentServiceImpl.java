@@ -1,12 +1,12 @@
 package com.example.equipment_service.service.impl;
 
+import com.example.equipment_service.Mapper.EquipmentMapper;
 import com.example.equipment_service.Repository.EquipmentRepository;
 import com.example.equipment_service.dtos.EquipmentDTO;
 import com.example.equipment_service.entity.Equipment;
 import com.example.equipment_service.producer.EquipmentEventProducer;
 import com.example.equipment_service.service.EquipmentService;
 import com.example.equipment_service.util.AuthUtil;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class EquipmentServiceImpl implements EquipmentService {
     private EquipmentEventProducer equipmentEventProducer;
 
     @Autowired
-    private ModelMapper mapper;
+    private EquipmentMapper mapper;
 
     @PreAuthorize("hasRole('Lender') or hasRole('Admin')")
     @Override
@@ -36,7 +36,7 @@ public class EquipmentServiceImpl implements EquipmentService {
         }
 
         int userId = Integer.parseInt(Objects.requireNonNull(AuthUtil.getUserId()));
-        Equipment equipment = mapper.map(equipmentDTO, Equipment.class);
+        Equipment equipment = mapper.equipmentDtoToEquipment(equipmentDTO);
         equipment.setOwnerId(userId);
         equipment.setAvailable(true);
 
@@ -49,24 +49,31 @@ public class EquipmentServiceImpl implements EquipmentService {
     @Transactional
     public boolean reserveEquipment(int equipmentId) {
 
-        int updatedRows =
-                equipmentRepository.reserveIfAvailable(equipmentId);
 
-        return updatedRows == 1;
+        int updated = equipmentRepository.reserveIfAvailable(equipmentId);
+
+        return updated == 1;
     }
 
     @Override
-    public EquipmentDTO getEquipmentById(int id) {
+    public Equipment getEquipmentById(int id) {
         Equipment equipment = equipmentRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Equipment not found with id: " + id));
-        return mapper.map(equipment, EquipmentDTO.class);
+        return equipment;
+    }
+
+    @Override
+    public EquipmentDTO getEquipmentDTOById(int id) {
+        Equipment equipment = equipmentRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Equipment not found with id: " + id));
+        return mapper.equipmentToEquipmentDto(equipment);
     }
 
     @Override
     public List<EquipmentDTO> getEquipmentsByUserId(int userId) {
         List<Equipment> equipments = equipmentRepository.findByOwnerId(userId);
         return equipments.stream()
-                .map(equipment -> mapper.map(equipment, EquipmentDTO.class))
+                .map(equipment -> mapper.equipmentToEquipmentDto(equipment))
                 .collect(Collectors.toList());
     }
 }

@@ -26,5 +26,7 @@ public class Equipment {
     private boolean available;
     @Column(name = "owner_id", nullable = false)
     private int ownerId;
+    @Column(name = "saga_id")
+    private String sagaId;
 
 }

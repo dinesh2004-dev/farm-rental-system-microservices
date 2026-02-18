@@ -27,4 +27,6 @@ public interface BookingsRepository extends JpaRepository<Booking,Integer> {
             @Param("endDate") LocalDateTime endDate
     );
 
+    Booking getReferenceByIdAndSagaId(@Param("id") int id, @Param("sagaId") String sagaId);
+
 }

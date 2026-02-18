@@ -35,6 +35,14 @@ public class KafkaConsumerConfig {
     }
 
     @Bean
+    public ConsumerFactory<String,String>  stringConsumerFactory(){
+
+        return new DefaultKafkaConsumerFactory<>(consumerConfigs(),
+                new StringDeserializer(),
+                new StringDeserializer());
+    }
+
+    @Bean
     public ConsumerFactory<String,EquipmentReservedEvent> equipmentReservedEventFactory(){
 
         JsonDeserializer<EquipmentReservedEvent> deserializer =
@@ -46,6 +54,8 @@ public class KafkaConsumerConfig {
                 new StringDeserializer(),
                 deserializer);
     }
+
+
 
     @Bean
     public ConsumerFactory<String, EquipmentReservationFailedEvent> equipmentReservationFailedEventFactory(){
@@ -80,6 +90,19 @@ public class KafkaConsumerConfig {
                 new ConcurrentKafkaListenerContainerFactory<>();
 
         factory.setConsumerFactory(equipmentReservationFailedEventFactory());
+        factory.setConcurrency(3);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
+        factory.getContainerProperties().setPollTimeout(3000);
+        return factory;
+    }
+
+    @Bean
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,String>> stringKafkaListenerContainerFactory(){
+
+        ConcurrentKafkaListenerContainerFactory<String,String> factory =
+                new ConcurrentKafkaListenerContainerFactory<>();
+
+        factory.setConsumerFactory(stringConsumerFactory());
         factory.setConcurrency(3);
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL);
         factory.getContainerProperties().setPollTimeout(3000);

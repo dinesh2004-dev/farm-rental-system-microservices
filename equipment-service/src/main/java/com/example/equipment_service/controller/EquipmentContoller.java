@@ -27,7 +27,7 @@ public class EquipmentContoller {
     @GetMapping("/{id}")
     public ResponseEntity<EquipmentDTO> getEquipmentById(@PathVariable int id){
 
-        EquipmentDTO equipmentDTO = equipmentService.getEquipmentById(id);
+        EquipmentDTO equipmentDTO = equipmentService.getEquipmentDTOById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(equipmentDTO);
     }

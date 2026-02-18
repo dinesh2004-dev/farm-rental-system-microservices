@@ -12,6 +12,7 @@ import java.time.Instant;
 public class EquipmentReservedEvent {
     private int bookingId;
     private int equipmentId;
+    private int lenderId;
     private String sagaId;
     private Instant timestamp;
 }
