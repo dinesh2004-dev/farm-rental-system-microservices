@@ -13,6 +13,7 @@ import java.util.Objects;
 @Table(name = "bookings")
 public class Booking {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -33,7 +34,7 @@ public class Booking {
     @Column(nullable = false)
     private double totalCost;
     @Column(nullable = false)
-    private String SagaId;
+    private String sagaId;
 
 
 }

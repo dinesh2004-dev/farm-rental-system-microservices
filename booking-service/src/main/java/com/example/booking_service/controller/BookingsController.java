@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.*;
 public class BookingsController {
 
     @Autowired
-    private BookingServiceImpl bookingServiceImpl;
+    private BookingService bookingService;
 
     @PostMapping("/create")
     public ResponseEntity<Integer> createBooking(@RequestBody BookingsDTO bookingsDTO){
 
-        int id = bookingServiceImpl.createBooking(bookingsDTO);
+        int id = bookingService.createBooking(bookingsDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body((id));
 
     }

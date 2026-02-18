@@ -4,7 +4,7 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.example.events.ReserveEquipmentCommand;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.TopicBuilder;
@@ -41,6 +41,16 @@ public class KafkaProducerConfig {
     }
 
     @Bean
+    public NewTopic bookingCreatedTopic(){
+
+        return TopicBuilder
+                .name("booking-created-event")
+                .partitions(3)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
     public Map<String,Object> producerConfig(){
 
         Map<String,Object> props = new HashMap<>();
@@ -59,16 +69,15 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public ProducerFactory<String, ReserveEquipmentCommand> producerFactory(){
+    public ProducerFactory<String, Object> producerFactory(){
 
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public KafkaTemplate<String,ReserveEquipmentCommand> kafkaTemplate(
-            ProducerFactory<String,ReserveEquipmentCommand> producerFactory
+    public KafkaTemplate<String,Object> kafkaTemplate(
+            ProducerFactory<String,Object> producerFactory
     ){
-
         return new KafkaTemplate<>(producerFactory);
     }
 }

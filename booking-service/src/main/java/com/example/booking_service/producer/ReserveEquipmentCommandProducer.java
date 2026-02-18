@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReserveEquipmentCommandProducer {
 
-    private final KafkaTemplate<String,ReserveEquipmentCommand> kafkaTemplate;
+    private final KafkaTemplate<String,Object> kafkaTemplate;
 
-    public ReserveEquipmentCommandProducer(KafkaTemplate<String, ReserveEquipmentCommand> kafkaTemplate) {
+    public ReserveEquipmentCommandProducer(KafkaTemplate<String,Object> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

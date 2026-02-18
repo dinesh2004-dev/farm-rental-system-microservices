@@ -2,6 +2,8 @@ package com.example.payment_service.filter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -24,11 +26,25 @@ public class GatewayAuthHeaderFilter implements Filter {
     @Value("${internal.auth.secret}")
     private String internalSecret;
 
+    private static final Logger log =
+            LoggerFactory.getLogger(GatewayAuthHeaderFilter.class);
+
+
+
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
 
+
+
+        log.info("GatewayAuthHeaderFilter invoked");
+
         HttpServletRequest req = (HttpServletRequest) request;
+
+        if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+            chain.doFilter(request, response);
+            return;
+        }
 
         String user = req.getHeader("X-Authenticated-User");
         String rolesHeader = req.getHeader("X-Authenticated-Roles");
