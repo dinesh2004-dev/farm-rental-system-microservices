@@ -2,7 +2,7 @@
 
 ## 📌 Overview
 
-Farm Equipment Rental System is a backend application built using **Java and Spring Boot**, designed using a **Microservices Architecture**.
+Farm Equipment Rental System is a backend application built using **Java and Spring Boot**, designed with a **Microservices Architecture**.
 
 The platform connects:
 
@@ -22,8 +22,22 @@ This project follows a distributed microservices architecture with:
 - **API Gateway** – Centralized routing & authentication
 - **Apache Kafka** – Event-driven communication
 - **Saga Pattern (Choreography-based)** – Distributed transaction handling
+- **JWT-based Role Authentication** – Secure access control
 
-All external client requests pass through the **API Gateway**, which routes them to appropriate services.
+All client requests pass through the **API Gateway**, where authentication and authorization are enforced before routing to respective services.
+
+---
+
+## 🔐 Authentication & Authorization
+
+- Implemented **JWT (JSON Web Token)** based authentication.
+- Users receive a JWT token upon successful login.
+- API Gateway validates the token before forwarding requests.
+- Role-based access control is enforced for:
+  - Lender
+  - Renter
+  - Admin
+- Only authorized roles can access specific endpoints.
 
 ---
 
@@ -37,6 +51,7 @@ All external client requests pass through the **API Gateway**, which routes them
 
 ### 2️⃣ API Gateway
 - Single entry point for all client requests
+- Validates JWT tokens
 - Routes requests to respective services
 - Handles authentication and request filtering
 
@@ -52,8 +67,9 @@ Manages all user-related operations.
 - Admin
 
 **Features:**
-- Add user
-- Delete user
+- User registration
+- Login & JWT generation
+- Add/Delete users (Admin)
 - Fetch user details
 - Role-based access handling
 
@@ -75,6 +91,8 @@ Handles equipment-related operations.
   - Price
   - Location
 
+Access restricted based on user role.
+
 ---
 
 ### 5️⃣ Booking Service
@@ -92,7 +110,7 @@ Coordinates with Payment and Equipment services during booking workflow.
 ### 6️⃣ Payment Service
 
 - Integrated with **Razorpay API**
-- Uses **Razorpay Test Mode** (development purpose)
+- Uses **Razorpay Test Mode** (for development purposes)
 - Handles payment creation and verification
 - Triggered during booking process
 
@@ -117,8 +135,8 @@ If any step fails (e.g., payment failure), compensating events are triggered to 
 
 ## 🔄 Booking Workflow
 
-1. Client sends booking request via API Gateway  
-2. Booking Service creates a booking event  
+1. Renter sends booking request via API Gateway  
+2. Booking Service creates booking event  
 3. Payment Service processes payment (Razorpay test mode)  
 4. On successful payment:
    - Equipment availability is updated  
@@ -133,6 +151,8 @@ If any step fails (e.g., payment failure), compensating events are triggered to 
 - Java
 - Spring Boot
 - Spring Cloud Gateway
+- Spring Security
+- JWT Authentication
 - Eureka Server
 - Apache Kafka
 - PostgreSQL
@@ -154,7 +174,7 @@ If any step fails (e.g., payment failure), compensating events are triggered to 
 
 1. Start PostgreSQL and create required databases for each service.
 2. Start Kafka server.
-3. Start **Eureka Server**.
+3. Start Eureka Server.
 4. Start other services in this order:
    - API Gateway
    - User Service
@@ -170,6 +190,7 @@ If any step fails (e.g., payment failure), compensating events are triggered to 
 - Microservices Architecture
 - Service Discovery
 - API Gateway Pattern
+- JWT-based Role Authentication
 - Event-Driven Architecture
 - Saga Pattern for Distributed Transactions
 - Third-Party Payment Integration
@@ -179,7 +200,6 @@ If any step fails (e.g., payment failure), compensating events are triggered to 
 
 ## 🚀 Future Enhancements
 
-- JWT-based authentication
 - Centralized logging
 - Circuit breaker implementation (Resilience4j)
 - Docker containerization
