@@ -1,93 +1,72 @@
-# 🚜 Farm Equipment Rental System – Microservices Architecture
+# 🌾 Farm Equipment Rental System – Microservices Architecture
 
-A **scalable, event-driven Farm Equipment Rental Platform** built using **Spring Boot microservices**, enabling farmers to rent agricultural equipment seamlessly with **secure booking, payment orchestration, and fault-tolerant workflows**.
+## 📌 Overview
 
-This project follows **real-world backend engineering practices** such as **Kafka-based asynchronous communication**, **Saga pattern**, **idempotency**, and **eventual consistency**.
+Farm Equipment Rental System is a backend application built using **Java and Spring Boot**, designed using a **Microservices Architecture**.
 
----
+The platform connects:
 
-## 📌 Key Features
+- **Lenders** – Farmers who own equipment and want to rent it out  
+- **Renters** – Farmers who need equipment  
+- **Admin** – Manages users and system-level operations  
 
-- Secure user authentication & role-based access
-- Equipment listing, search & availability management
-- Booking lifecycle management using Saga pattern
-- Payment processing using Razorpay
-- Event-driven communication using Apache Kafka
-- Fault-tolerant distributed transactions
-- Dockerized microservices
-- Cloud-ready (AWS compatible)
+The system was migrated from a monolithic architecture to microservices to improve scalability, modularity, and service independence.
 
 ---
 
-## 🧱 Microservices Overview
+## 🏗 Architecture Overview
 
-| Service | Description |
-|-------|------------|
-| API Gateway | Central entry point and routing |
-| User Service | Authentication, authorization, user management |
-| Equipment Service | Equipment listing and availability handling |
-| Booking Service | Booking creation and Saga orchestration |
-| Payment Service | Payment initiation, verification, refunds |
-| Service Registry | Service discovery using Eureka |
+This project follows a distributed microservices architecture with:
 
----
+- **Eureka Server** – Service Discovery
+- **API Gateway** – Centralized routing & authentication
+- **Apache Kafka** – Event-driven communication
+- **Saga Pattern (Choreography-based)** – Distributed transaction handling
 
-## 🏗️ Architecture
-
-- **Architecture Style:** Microservices
-- **Communication:**
-  - REST (Synchronous)
-  - Kafka (Asynchronous, Event-driven)
-- **Transaction Management:** Saga Pattern (Choreography-based)
-- **Data Consistency:** Eventual consistency
-- **Failure Handling:** Retry mechanism & compensating transactions
+All external client requests pass through the **API Gateway**, which routes them to appropriate services.
 
 ---
 
-## 🔁 Saga Workflow (Booking → Payment)
+## 🔧 Microservices
 
-1. Booking Service publishes `ReserveEquipmentCommand`
-2. Equipment Service:
-   - Reserves equipment
-   - Publishes `EquipmentReservedEvent` or `EquipmentReservationFailedEvent`
-3. Payment Service:
-   - Creates Razorpay order
-   - Verifies payment
-   - Publishes `PaymentSuccessEvent` or `PaymentFailedEvent`
-4. Booking Service:
-   - Confirms booking on success
-   - Cancels booking on failure
-
-✔️ Prevents partial failures in distributed systems
+### 1️⃣ Eureka Server
+- Registers all microservices
+- Enables dynamic service discovery
 
 ---
 
-## 🧰 Tech Stack
-
-### Backend
-- Java 17
-- Spring Boot
-- Spring Data JPA
-- Spring Security (JWT)
-- Spring Cloud Gateway
-- Eureka Discovery Server
-
-### Messaging
-- Apache Kafka
-- Kafka Producers & Consumers
-- Idempotent event processing
-
-### Database
-- MySQL (Database per service)
-
-### Payments
-- Razorpay Payment Gateway
-
-### DevOps
-- Docker & Docker Compose
-- AWS EC2 (deployment-ready)
+### 2️⃣ API Gateway
+- Single entry point for all client requests
+- Routes requests to respective services
+- Handles authentication and request filtering
 
 ---
 
-## 📂 Project Structure
+### 3️⃣ User Service
 
+Manages all user-related operations.
+
+**User Roles:**
+- Lender
+- Renter
+- Admin
+
+**Features:**
+- Add user
+- Delete user
+- Fetch user details
+- Role-based access handling
+
+---
+
+### 4️⃣ Equipment Service
+
+Handles equipment-related operations.
+
+**Lenders can:**
+- Add equipment
+- Update equipment
+- Delete equipment
+
+**Features:**
+- Equipment listing
