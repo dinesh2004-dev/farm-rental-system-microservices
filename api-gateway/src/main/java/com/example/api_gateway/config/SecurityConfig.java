@@ -72,7 +72,7 @@ public class SecurityConfig {
                 .authorizeExchange(exchanges ->
                         exchanges
                                 .pathMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                            .pathMatchers("/api/auth/login","/users/save").permitAll()
+                            .pathMatchers("/api/auth/login","/users/save","/webhook/razorpay").permitAll()
                             .anyExchange().authenticated())
                 .addFilterAt(bearerAuthFilter, SecurityWebFiltersOrder.AUTHENTICATION)
                 .httpBasic(httpBasicSpec -> httpBasicSpec.disable()) // disable if you don't want basic

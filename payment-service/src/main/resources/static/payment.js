@@ -11,7 +11,7 @@ async function payNow(){
      "Content-Type":"application/json"}
      ,
      body:JSON.stringify({
-     bookingId: 53
+     bookingId: 65
      })
      });
       const orderData = await response.json();
