@@ -17,6 +17,10 @@ public class WebhookEvent {
     private String eventId;
     @Column(nullable = false,updatable = false)
     private Instant createdAt;
+    @Column(nullable = false,updatable = false)
+    private String entityId;
+    @Column(nullable = false,columnDefinition = "TEXT")
+    private String payload;
     @Column
     private Instant processedAt;
     @Column(nullable = false)
@@ -24,6 +28,8 @@ public class WebhookEvent {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private WebhookStatus status;
+
+
 
     @PrePersist
     public void onCreate(){
